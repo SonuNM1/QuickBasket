@@ -6,6 +6,9 @@ import sendEmail from '../config/sendEmail.js'
 import generateAccessToken from '../utils/generateAccessToken.js'
 import generateRefreshToken from '../utils/generateRefreshToken.js'
 import uploadImageCloudinary from '../utils/uploadImageCloudinay.js'
+import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js'
+import generateOTP from '../utils/generateOTP.js'
+import jwt from 'jsonwebtoken'
 
 // Controller function for User registration 
 
@@ -309,4 +312,318 @@ export async function uploadAvatar(req, res){
     }
 }
 
-// 3.12 
+
+/* Update user details  */
+
+
+export async function updateUserDetails(req, res){
+    try{
+
+        // Retrieve the userId from the auth middleware - it ensures that only authenticated user can update the details 
+
+        const userId = req.userId  
+
+        const {name, email, mobile, password} = req.body    // extract fields to be updated from the req body 
+
+        // Validation - check if atleast oen field is provided 
+
+        if(!name && !email && !mobile && !password){
+            return res.status(400).json({
+                message: 'No fields to update',
+                error: true, 
+                success: false
+            })
+        }
+
+        let hashPassword = ''
+
+        // if the password is provided, hash it for security 
+
+        if(password){
+            const salt = await bcryptjs.genSalt(10)
+            hashPassword = await bcryptjs.hash(password, salt)
+        }
+
+        // Update the user details in the database 
+
+        const updateUser = await UserModel.updateOne({_id: userId}, {
+            ...(name && {name: name}),
+            ...(email && {email: email}),
+            ...(mobile && {mobile: mobile}),
+            ...(password && {password: hashPassword})
+        })
+
+        return res.json({
+            message: 'User details updated successfully', 
+            error: false, 
+            success: true, 
+            data: updateUser
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            message: error.message || error , 
+            error: true , 
+            success: false 
+        })
+    }
+}
+
+
+/* Forgot password - Send OTP through email -> Verify OTP controller -> Reset password controller */
+
+
+export async function forgotPassword(req, res){
+    try{
+        const {email} = req.body    // extract email from the req 
+
+        // check if the user exists in the database 
+
+        const user = await UserModel.findOne({email})
+
+        // if no user found, send a res indicating the email is not found in the db 
+
+        if(!user){
+            return res.status(400).json({
+                message: "Email doesn't exist",
+                error: true, 
+                success: false
+            })
+        }
+
+        // generating a random OTP using a helper function 
+
+        const otp = generateOTP()
+
+        const expireTime = new Date() + 60*60*1000   // OTP expiration time 1 hour from now 
+        
+        // Update the user's record in the database with the OTP and its expiry time 
+
+        const update = await UserModel.findByIdAndUpdate(user._id , {
+            forgot_password_otp : otp, 
+            forgot_password_expiry : new Date(expireTime).toISOString()
+        })
+
+        // Send an email to the user with the OTP with user's email address,subject and a predefined HTML template for the email 
+
+        await sendEmail({
+            sendTo: email, 
+            subject: 'Forgot password from QuickBasket', 
+            html: forgotPasswordTemplate({
+                name: user.name, 
+                otp: otp
+            })
+        })
+
+        return res.json({
+            message: 'Check your registered email',
+            error: false, 
+            success: true
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            message: error.message || error, 
+            error: true,
+            success: false
+        })
+    }
+}
+
+
+/* Verify forgot password OTP  */
+
+
+export async function verifyForgotPasswordOTP(req, res){
+    try{
+        const {email, otp} = req.body   // extract email and otp from the req body 
+
+        // validate both email and otp has been provided 
+
+        if(!email || !otp){
+            return res.status(400).json({
+                message: 'Provide required field: Email and OTP', 
+                error: true,
+                success: false
+            })
+        }
+
+        // Check if the user exists in the dabatase using the email 
+
+        const user = await UserModel.findOne({email})
+
+        if(!user){
+            return res.status(400).json({
+                message: 'Email not available',
+                error: true, 
+                success: false
+            })
+        }
+
+        const currentTime = new Date().toISOString()    // Get the current time in ISO format 
+
+        // Check if the OTP has expired 
+
+        if(user.forgot_password_expiry < currentTime){
+            return res.status(400).json({
+                message: 'OTP is expired', 
+                error: true, 
+                success: false
+            })
+        }
+
+        // Verify if the provided otp matches the one in the database 
+
+        if(otp !== user.forgot_password_otp){
+            return res.status(400).json({
+                message: 'Invalid OTP', 
+                error: true, 
+                success: false
+            })
+        }
+
+        // If all validation pass then send a success message 
+
+        return res.json({
+            message: 'OTP Verification successful', 
+            error: false, 
+            success: true
+        })
+        
+    }catch(error){
+        return res.status(500).json({
+            message: error.message || error, 
+            error: true, 
+            success: false 
+        })
+    }
+}
+
+
+/* Reset the password  */
+
+
+export async function resetPassword(req, res){
+    try{
+        const {email, newPassword, confirmPassword} = req.body 
+
+        if(!email  || !newPassword || !confirmPassword){
+            return res.status(400).json({
+                message: 'Provide required fields: email, newPassword and confirmPassword'
+            })
+        }
+
+        const user = await UserModel.findOne({email})
+
+        if(!user){
+            return res.status(500).json({
+                message: 'Email not available',
+                error: true, 
+                success: false 
+            })
+        }
+
+        if(newPassword !== confirmPassword){
+            return res.status(400).json({
+                message: 'newPassword and confirmPassword not same.',
+                error: true,
+                success: false
+            })
+        }
+
+        const salt = await bcryptjs.genSalt(10)
+        const hashPassword = await bcryptjs.hash(newPassword, salt) 
+
+        const update = await UserModel.findOneAndUpdate(user._id , {
+            password: hashPassword
+        })
+
+        return res.json({
+            message: 'Password updated successfully', 
+            error: false, 
+            success: true 
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            message: error.message || error, 
+            error: true, 
+            success: false
+        })
+    }
+}
+
+
+/* Refresh token controller */
+
+
+export async function refreshToken(req, res){
+    try{
+
+        // Extract refresh token from the cookies or Authorization header (Bearer token format)
+
+        const refreshToken = req.cookies.refreshToken || req?.header?.authorization?.split(' ')[1]  // [Bearer <token>]
+
+        // Check if the refresh token is provided 
+
+        if(!refreshToken){
+            return res.status(401).json({
+                message: 'Invalid token',
+                error: true ,
+                success: false 
+            })
+        }
+
+        // console.log('refreshToken: ', refreshToken)
+
+        // Verify the refresh token using the secret key for refresh tokens 
+
+        const verifyToken = await jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN)
+
+        // if refresh token verification fails, return an error 
+
+        if(!verifyToken){
+            return res.status(401).json({
+                message: 'Token is expired',
+                error: true,
+                success: false
+            })
+        }
+
+        // extract the userId from te verifyToken payload 
+
+        const userId = verifyToken?._id 
+
+        // Generate a new access token using the userId
+
+        const newAccessToken = await generateAccessToken(userId)
+
+        // Set options for the access token cookie 
+
+        const cookiesOption = {
+            httpOnly: true, 
+            secure: true,
+            sameSite: 'None'
+        }
+
+        // Store the new access token in the response cookie 
+
+        res.cookie('accessToken', newAccessToken, cookiesOption)
+
+        return res.json({
+            message: 'New Access-token generated',
+            error: false, 
+            success: true, 
+            data: {
+                accessToken: newAccessToken     // include the new access token in the response 
+            }
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            message: error.message || error, 
+            error: true, 
+            success: false
+        })
+    }
+}
