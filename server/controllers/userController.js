@@ -196,6 +196,10 @@ export async function loginController(req, res){
         const accessToken = await generateAccessToken(user._id)
         const refreshToken = await generateRefreshToken(user._id)
 
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+            last_login_date: new Date()
+        }) 
+
         // Set secure options for cookies 
 
         const cookiesOption = {
@@ -482,6 +486,11 @@ export async function verifyForgotPasswordOTP(req, res){
             })
         }
 
+        const updateUser = await UserModel.findByIdAndUpdate(user._id, {
+            forgot_password_otp: '',
+            forgot_password_expiry: ''
+        }) 
+
         // If all validation pass then send a success message 
 
         return res.json({
@@ -622,6 +631,31 @@ export async function refreshToken(req, res){
     }catch(error){
         return res.status(500).json({
             message: error.message || error, 
+            error: true, 
+            success: false
+        })
+    }
+}
+
+
+/* Get login user details  */
+
+
+export async function userDetails(req, res){
+    try{
+        const userId = req.userId
+        
+        const user = await UserModel.findById(userId).select('-password -refresh_token')
+
+        return res.json({
+            message: 'User details',
+            data: user,
+            error: false, 
+            success: true
+        })
+    }catch(error){
+        return res.status(500).json({
+            message: 'Something is wrong',
             error: true, 
             success: false
         })

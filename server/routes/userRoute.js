@@ -8,6 +8,7 @@ import {
     resetPassword, 
     updateUserDetails, 
     uploadAvatar, 
+    userDetails, 
     verifyEmailController, 
     verifyForgotPasswordOTP
 } from '../controllers/userController.js'
@@ -35,6 +36,8 @@ userRouter.put('/verify-forgot-password-otp', verifyForgotPasswordOTP)
 userRouter.put('/reset-password', resetPassword)
 
 userRouter.post('/refresh-token', refreshToken)
+
+userRouter.get('/user-details', auth,  userDetails)
 
 export default userRouter
 
