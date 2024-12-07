@@ -37,6 +37,14 @@ const Header = () => {
     setOpenUserMenu(false)
   }
 
+  const handleMobileUser = () => {
+    if(!user._id){
+      navigate('/login')
+      return 
+    }
+    navigate('/user')
+  }
+
   return (
     <header className="h-24 lg:h-20 shadow-md sticky top-0 bg-red-500 flex flex-col justify-center gap-1 bg-white ">
       {!(isSearchPage && isMobile) && (
@@ -73,7 +81,7 @@ const Header = () => {
           <div className="">
             {/* User icons display in only mobile version */}
 
-            <button className="text-neutral-600 lg:hidden ">
+            <button className="text-neutral-600 lg:hidden" onClick={handleMobileUser} >
               <FaRegCircleUser size={26} />
             </button>
 

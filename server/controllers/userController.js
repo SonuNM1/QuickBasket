@@ -302,6 +302,8 @@ export async function uploadAvatar(req, res){
 
         return res.json({
             message: 'Profile picture uploaded successfully',
+            success: true,
+            error: false,  
             data: {
                 _id: userId,
                 avatar: upload.url
@@ -571,7 +573,7 @@ export async function refreshToken(req, res){
 
         // Extract refresh token from the cookies or Authorization header (Bearer token format)
 
-        const refreshToken = req.cookies.refreshToken || req?.header?.authorization?.split(' ')[1]  // [Bearer <token>]
+        const refreshToken = req.cookies.refreshToken || req?.headers?.authorization?.split(' ')[1]  // [Bearer <token>]
 
         // Check if the refresh token is provided 
 
