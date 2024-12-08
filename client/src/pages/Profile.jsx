@@ -9,11 +9,13 @@ import SummaryApi from "../common/SummaryAPI";
 import AxiosToastError from "../util/AxiosToastError";
 import fetchUserDetails from "../util/FetchUserDetails";
 import { setUserDetails } from "../store/userSlice";
+import toast from "react-hot-toast";
 
 
 const Profile = () => {
 
-    const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
+  
   const [openProfileAvatarEdit, setProfileAvatarEdit] = useState(false);
 
   const [userData, setUserData] = useState({
@@ -26,13 +28,13 @@ const Profile = () => {
 
   const [loading, setLoading] = useState(false)
 
-  useEffect(()=>{
+  useEffect(() => {
     setUserData({
-        name: user.name , 
-        email: user.email, 
-        mobile: user.mobile
-    })
-  },[])
+        name: user.name || "",
+        email: user.email || "",
+        mobile: user.mobile || "",
+    });
+}, [user]);
 
   const handleOnChange = async (e) => {
     const {name, value} = e.target 
@@ -45,7 +47,7 @@ const Profile = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     try{
@@ -74,7 +76,8 @@ const Profile = () => {
   }
 
   return (
-    <div>
+    <div className="p-4">
+
       {/* Profile upload and display image  */}
 
       <div className="w-20 h-20 bg-red-500 flex items-center justify-center overflow-hidden drop-shadow-sm">
@@ -101,7 +104,7 @@ const Profile = () => {
 
         <div className="grid">
           <label>Name</label>
-          <iinput type="text" placeholder="Enter your name" 
+          <input type="text" placeholder="Enter your name" 
           className='p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded'
           value={userData.name}
           name='name'

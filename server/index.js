@@ -8,6 +8,8 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import connectDB from "./config/connectDB.js"
 import userRouter from "./routes/userRoute.js"
+import categoryRouter from "./routes/categoryRoute.js"
+import uploadRouter from "./routes/uploadRoute.js"
 
 const app = express() 
 
@@ -32,6 +34,8 @@ app.get('/', (req, res)=> {
 })
 
 app.use('/api/user', userRouter)
+app.use('/api/category', categoryRouter)
+app.use('/api/file', uploadRouter)
 
 connectDB().then(()=>{
     app.listen(PORT, ()=>{

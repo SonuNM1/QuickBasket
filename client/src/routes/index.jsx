@@ -12,6 +12,11 @@ import Dashboard from "../layouts/Dashboard.jsx";
 import Profile from "../pages/Profile.jsx";
 import MyOrder from "../pages/MyOrder.jsx";
 import Address from "../pages/Address.jsx";
+import CategoryPage from "../pages/CategoryPage.jsx";
+import SubCategoryPage from "../pages/SubCategoryPage.jsx";
+import UploadProduct from "../pages/UploadProduct.jsx";
+import ProductAdmin from "../pages/ProductAdmin.jsx";
+import AdminPermission from "../layouts/AdminPermission.jsx";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +71,30 @@ const router = createBrowserRouter([
                         path: 'address',
                         element: <Address/>
                     }, 
+                    {
+                        path: 'category',
+                        element: <AdminPermission>
+                            <CategoryPage/>
+                        </AdminPermission>
+                    }, 
+                    {
+                        path: 'subcategory',
+                        element: <AdminPermission>
+                            <SubCategoryPage/>
+                        </AdminPermission>
+                    }, 
+                    {
+                        path: 'upload-product',
+                        element: <AdminPermission>
+                            <UploadProduct/>
+                        </AdminPermission>
+                    }, 
+                    {
+                        path: 'product',
+                        element: <AdminPermission>
+                            <ProductAdmin/>
+                        </AdminPermission>
+                    }, 
                 ]
             },
         ]
@@ -74,3 +103,4 @@ const router = createBrowserRouter([
 
 export default router 
 
+// 3.12 

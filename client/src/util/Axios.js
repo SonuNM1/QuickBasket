@@ -27,7 +27,7 @@ Axios.interceptors.request.use( async (config)=>{
 Axios.interceptors.request.use(
     (response)=>{
         return response 
-    }
+    },
     async (error)=>{
         let originRequest = error.config 
 
