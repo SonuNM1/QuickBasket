@@ -107,7 +107,7 @@ const ResetPassword = () => {
 
                 <div
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="cursor:pointer"
+                  className="cursor-pointer"
                 >
                   {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </div>
@@ -130,7 +130,7 @@ const ResetPassword = () => {
 
                 <div
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="cursor:pointer"
+                  className="cursor-pointer"
                 >
                   {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                 </div>
