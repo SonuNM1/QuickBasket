@@ -11,6 +11,7 @@ import userRouter from "./routes/userRoute.js"
 import categoryRouter from "./routes/categoryRoute.js"
 import uploadRouter from "./routes/uploadRoute.js"
 import subCategoryRouter from "./routes/subCategoryRoute.js"
+import productRouter from "./routes/productRoute.js"
 
 const app = express() 
 
@@ -38,6 +39,7 @@ app.use('/api/user', userRouter)
 app.use('/api/category', categoryRouter)
 app.use('/api/file', uploadRouter)
 app.use('/api/subcategory', subCategoryRouter)
+app.use('/api/product', productRouter)
 
 connectDB().then(()=>{
     app.listen(PORT, ()=>{

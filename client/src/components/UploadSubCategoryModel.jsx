@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 import AxiosToastError from '../util/AxiosToastError'
 
 
-const UploadSubCategoryModel = ({close}) => {
+const UploadSubCategoryModel = ({close, fetchData}) => {
 
     const [subCategoryData, setSubCategoryData] = useState({
         name: '', 
@@ -78,6 +78,10 @@ const UploadSubCategoryModel = ({close}) => {
 
                 if(close){
                     close()
+                }
+
+                if(fetchData){
+                    fetchData()
                 }
             }
 
@@ -214,4 +218,3 @@ const UploadSubCategoryModel = ({close}) => {
 
 export default UploadSubCategoryModel;
 
-// 4.50

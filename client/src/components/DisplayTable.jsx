@@ -30,7 +30,7 @@ const DisplayTable = ({data, column}) => {
                             {
                                 headerGroup.headers.map(header => {
                                     <th 
-                                    className='border'
+                                    className='border whitespace-nowrap'
                                     key={header.id}>
                                         {
                                             header.isPlaceholder ? null : flexRender (
@@ -49,7 +49,7 @@ const DisplayTable = ({data, column}) => {
                 {
                     table.getRowModel().rows.map((row,index) => (
                         <tr key={row.id}>
-                            <td className='border px-2 py-1'>{index+1}</td>
+                            <td className='border px-2 py-1 whitespace-nowrap'>{index+1}</td>
                             {
                                 row.getVisibleCells().map(cell => (
                                     <td key={cell.id} className='border px-2 py-1' >
