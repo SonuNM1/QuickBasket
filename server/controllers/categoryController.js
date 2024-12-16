@@ -1,6 +1,6 @@
 
 import CategoryModel from '../models/categoryModel.js'
-import SubCategoryModel from '../models.subCategoryModel.js'
+import SubCategoryModel from '../models/subCategoryModel.js'
 import ProductModel from '../models/productModel.js'
 
 export const AddCategoryController = async (req, res) => {

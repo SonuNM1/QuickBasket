@@ -25,7 +25,7 @@ userRouter.post('/login', loginController)
 
 userRouter.get('/logout', auth, logoutController)
 
-userRouter.put('/upload-avatar', auth,upload.single('avatar'), uploadAvatar)
+userRouter.put('/upload-avatar', auth, upload.single('avatar'), uploadAvatar)
 
 userRouter.put('/update-user', auth, updateUserDetails)
 

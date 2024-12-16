@@ -15,6 +15,7 @@ import EditSubCategory from "../components/EditSubCategory";
 import toast from "react-hot-toast";
 
 const SubCategoryPage = () => {
+  
   const [openAddSubCategory, setOpenAddSubCategory] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -188,4 +189,4 @@ const SubCategoryPage = () => {
 
 export default SubCategoryPage;
 
-// 8.04
+

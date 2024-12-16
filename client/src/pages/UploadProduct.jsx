@@ -11,11 +11,10 @@ import { IoClose } from "react-icons/io5";
 import AddFieldComponent from "../components/AddFieldComponent";
 import Axios from "../util/Axios";
 import SummaryApi from "../common/SummaryAPI";
-import AxiosToastError from '../util/AxiosToastError'
+import AxiosToastError from "../util/AxiosToastError";
 import successAlert from "../util/SuccessAlert";
 
 const UploadProduct = () => {
-
   const [data, setData] = useState({
     name: "",
     image: [],
@@ -31,15 +30,14 @@ const UploadProduct = () => {
 
   const [imageLoading, setImageLoading] = useState(false);
   const [viewImageURL, setViewImageURL] = useState("");
-  const [selectCategory, setSelectCategory] = useState("")
-  const [selectSubCategory, setSelectSubCategory] = useState("")
-  const [openAddField, setOpenAddField] = useState(false)
-  const [fieldName, setFieldName] = useState("")
-  
-  const allSubCategory = useSelector(state => state.product.allSubCategory)
+  const [selectCategory, setSelectCategory] = useState("");
+  const [selectSubCategory, setSelectSubCategory] = useState("");
+  const [openAddField, setOpenAddField] = useState(false);
+  const [fieldName, setFieldName] = useState("");
 
-  const allCategory = useSelector(state => state.product.allCategory)
+  const allSubCategory = useSelector((state) => state.product.allSubCategory);
 
+  const allCategory = useSelector((state) => state.product.allCategory);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,92 +82,87 @@ const UploadProduct = () => {
     });
   };
 
-  const handleRemoveCategory = async (index) =>{
-    data.category.splice(index, 1)
+  const handleRemoveCategory = async (index) => {
+    data.category.splice(index, 1);
 
-    setData((prev)=>{
+    setData((prev) => {
       return {
-        ...prev 
-      }
-    })
-  }
+        ...prev,
+      };
+    });
+  };
 
-  const handleRemoveSubCategory = async (index) =>{
-    data.subCategory.splice(index, 1)
-    setData((prev)=>{
+  const handleRemoveSubCategory = async (index) => {
+    data.subCategory.splice(index, 1);
+    setData((prev) => {
       return {
-        ...prev
-      }
-    })
-  }
+        ...prev,
+      };
+    });
+  };
 
-  const handleAddField = () =>{
-
-    setData((prev)=>{
+  const handleAddField = () => {
+    setData((prev) => {
       return {
-        ...prev , 
-        more_details : {
-          ...prev.more_details, 
-          [fieldName] : ''
-        }
-      }
-    })
-    setFieldName('')
-    setOpenAddField(false)
-  }
+        ...prev,
+        more_details: {
+          ...prev.more_details,
+          [fieldName]: "",
+        },
+      };
+    });
+    setFieldName("");
+    setOpenAddField(false);
+  };
 
-  const handleSubmit = async (e) =>{
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    try{
+    try {
       const response = await Axios({
-        ...SummaryApi.createProduct, 
-        data: data
-      })
+        ...SummaryApi.createProduct,
+        data: data,
+      });
 
-      const {data : responseData} = response 
+      const { data: responseData } = response;
 
-      if(responseData.success){
-        successAlert(responseData.message)
+      if (responseData.success) {
+        successAlert(responseData.message);
 
         setData({
-          name: '',
+          name: "",
           image: [],
           category: [],
           subCategory: [],
-          unit: '',
-          stock: '',
-          price: '',
-          discount: '',
-          description: '',
-          more_details: {}
-        })
+          unit: "",
+          stock: "",
+          price: "",
+          discount: "",
+          description: "",
+          more_details: {},
+        });
       }
-
-    }catch(error){
-      AxiosToastError(error)
+    } catch (error) {
+      AxiosToastError(error);
     }
-  }
+  };
 
   // useEffect(()=>{
   //   successAlert('Product uploaded successfully')
   // },[])
 
   return (
-    <section>
+    <section className="">
       <div className="p-2 bg-white shadow-md flex items-center justify-between ">
         <h2 className="font-semibold ">Upload Product</h2>
       </div>
 
       <div className="grid p-3">
-        <form className="grid gap-4"
-        onSubmit={handleSubmit}
-        >
-
+        <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
-            <label htmlFor="name"
-            className="font-medium"
-            >Name</label>
+            <label htmlFor="name" className="font-medium">
+              Name
+            </label>
             <input
               id="name"
               type="text"
@@ -183,19 +176,19 @@ const UploadProduct = () => {
           </div>
 
           <div className="grid gap-1">
-            <label 
-            className="font-medium"
-            htmlFor="description">Description</label>
+            <label className="font-medium" htmlFor="description">
+              Description
+            </label>
             <textarea
               id="description"
               type="text"
               placeholder="Enter product description"
               name="description"
-              value={data.name}
+              value={data.description}
               onChange={handleChange}
               required
               multiple
-              rows={2}
+              rows={3}
               className="bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded resize-none"
             />
           </div>
@@ -256,129 +249,120 @@ const UploadProduct = () => {
           </div>
 
           <div className="grid gap-1">
-            <label className="font-medium" >Category</label>
+            <label className="font-medium">Category</label>
             <div>
-
               <select
-              className="bg-blue-50 border w-full p-2 rounded"
-              value={selectCategory}
-              onChange={(e)=>{
+                className="bg-blue-50 border w-full p-2 rounded"
+                value={selectCategory}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-                const value = e.target.value 
-                
-                const category = allCategory.find(el => el._id === value)
+                  const category = allCategory.find((el) => el._id === value);
 
-                setData((...prev)=>{
+                  setData((prev) => {
                     return {
-                      ...prev , 
-                    category : [...prev.category, category]
-                    }
-                })
+                      ...prev,
+                      category: [...(prev.category || []), category], // Fallback to an empty array if prev.category is not an array
+                    };
+                  });
 
-                setSelectCategory("")
-              }}
+                  setSelectCategory("");
+                }}
               >
-                <option value={""} >Select Category</option>
-                {
-                  allCategory.map((c, index)=>{
-                    return (
-                      <option 
-                      key={`${c._id}-${index}`}
-                      value={c?._id}>
-                        {c.name}
-                      </option>
-                    )
-                  })
-                }
+                <option value={""}>Select Category</option>
+                {allCategory.map((c, index) => {
+                  return (
+                    <option key={`${c._id}-${index}`} value={c?._id}>
+                      {c.name}
+                    </option>
+                  );
+                })}
               </select>
 
-                <div className="flex flex-wrap gap-3">
-                {
-                  data.category.map((c, index)=>{
-                    return (
-                      <div key={c._id+index +"productsection"}
+              <div className="flex flex-wrap gap-3">
+                {data.category.map((c, index) => {
+                  return (
+                    <div
+                      key={c._id + index + "productsection"}
                       className="text-sm flex items-center gap-1 bg-blue-50 mt-2"
+                    >
+                      <p>{c.name}</p>
+                      <div
+                        className="hover:text-red-500 cursor-pointer"
+                        onClick={() => handleRemoveCategory(index)}
                       >
-                        <p>{c.name}</p>
-                        <div className="hover:text-red-500 cursor-pointer"
-                        onClick={()=>handleRemoveCategory(index)}
-                        >
-                          <IoClose size={20}/>
-                        </div>
+                        <IoClose size={20} />
                       </div>
-                    )
-                  })
-                }
-                </div>
-
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           <div className="grid gap-1">
             <label className="font-medium">Sub Category</label>
             <div>
-
               <select
-              className="bg-blue-50 border w-full p-2 rounded"
-              value={selectSubCategory}
-              onChange={(e)=>{
+                className="bg-blue-50 border w-full p-2 rounded"
+                value={selectSubCategory}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-                const value = e.target.value 
-                
-                const subCategory = allSubCategory.find(el => el._id === value)
+                  const subCategory = allSubCategory?.find(
+                    (el) => el._id === value
+                  );
 
-                setData((...prev)=>{
+                  setData((prev) => {
                     return {
-                      ...prev , 
-                    subCategory : [...prev.subCategory, subCategory]
-                    }
-                })
+                      ...prev,
+                      subCategory: [...(prev.subCategory || []), subCategory],
+                    };
+                  });
 
-                setSelectSubCategory("")
-              }}
+                  setSelectSubCategory("");
+                }}
               >
-                <option value={""} 
-                className="text-neutral-600"
-                >Select Sub Category</option>
+                <option value={""} className="text-neutral-600">
+                  Select Sub Category
+                </option>
                 {
-                  allSubCategory.map((c, index)=>{
+                  allSubCategory?.length > 0 &&
+                  allSubCategory.map((c, index) => {
                     return (
-                      <option 
-                      key={`${c?._id}-${index}`}
-                      value={c?._id}>
+                      <option key={`${c?._id}-${index}`} value={c?._id}>
                         {c.name}
                       </option>
-                    )
+                    );
                   })
                 }
               </select>
 
-                <div className="flex flex-wrap gap-3">
-                {
-                  data.subCategory.map((c, index)=>{
-                    return (
-                      <div key={c._id+index +"subCategorySection"}
+              <div className="flex flex-wrap gap-3">
+                {data.subCategory.map((c, index) => {
+                  return (
+                    <div
+                      key={c._id + index + "subCategorySection"}
                       className="text-sm flex items-center gap-1 bg-blue-50 mt-2"
+                    >
+                      <p>{c.name}</p>
+                      <div
+                        className="hover:text-red-500 cursor-pointer"
+                        onClick={() => handleRemoveSubCategory(index)}
                       >
-                        <p>{c.name}</p>
-                        <div className="hover:text-red-500 cursor-pointer"
-                        onClick={()=>handleRemoveSubCategory(index)}
-                        >
-                          <IoClose size={20}/>
-                        </div>
+                        <IoClose size={20} />
                       </div>
-                    )
-                  })
-                }
-                </div>
-
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           <div className="grid gap-1">
-            <label 
-            className="font-medium"
-            htmlFor="unit">Unit</label>
+            <label className="font-medium" htmlFor="unit">
+              Unit
+            </label>
             <input
               id="unit"
               type="text"
@@ -390,11 +374,11 @@ const UploadProduct = () => {
               className="bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded "
             />
           </div>
-          
+
           <div className="grid gap-1">
-            <label 
-            className="font-medium"
-            htmlFor="stock">Stock (in number) </label>
+            <label className="font-medium" htmlFor="stock">
+              Stock (in number){" "}
+            </label>
             <input
               id="stock"
               type="number"
@@ -406,11 +390,11 @@ const UploadProduct = () => {
               className="bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded "
             />
           </div>
-          
+
           <div className="grid gap-1">
-            <label 
-            className="font-medium"
-            htmlFor="price">Price</label>
+            <label className="font-medium" htmlFor="price">
+              Price
+            </label>
             <input
               id="price"
               type="number"
@@ -424,9 +408,9 @@ const UploadProduct = () => {
           </div>
 
           <div className="grid gap-1">
-            <label 
-            className="font-medium"
-            htmlFor="discount">Discount</label>
+            <label className="font-medium" htmlFor="discount">
+              Discount
+            </label>
             <input
               id="discount"
               type="number"
@@ -441,73 +425,62 @@ const UploadProduct = () => {
 
           {/* Add more field */}
 
-            {
-              Object.keys(data?.more_details)?.map((k, index)=>{
-                return (
-                  <div className="grid gap-1"
-                  key={k}
-                  >
-                    <label htmlFor={k}
-                    className="font-medium"
-                    >{k}</label>
-                    <input
-                      id={k}
-                      type="text"
-                      value={data?.more_details[k]}
-                      onChange={(e)=>{
-                        const value = e.target.value 
+          {Object.keys(data?.more_details)?.map((k, index) => {
+            return (
+              <div className="grid gap-1" key={k}>
+                <label htmlFor={k} className="font-medium">
+                  {k}
+                </label>
+                <input
+                  id={k}
+                  type="text"
+                  value={data?.more_details[k]}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-                        setData((prev)=>{
-                          return {
-                            ...prev , 
-                            more_details : {
-                              ...prev.more_details, 
-                              [k] :value
-                            }
-                          }
-                        })
-                      }}
-                      required
-                      className="bg-blue-50 p-2 outline-none focus-within:bg-primary-200"
-                    />
-                  </div>
-                )
-              })
-            }
-       
+                    setData((prev) => {
+                      return {
+                        ...prev,
+                        more_details: {
+                          ...prev.more_details,
+                          [k]: value,
+                        },
+                      };
+                    });
+                  }}
+                  required
+                  className="bg-blue-50 p-2 outline-none focus-within:bg-primary-200"
+                />
+              </div>
+            );
+          })}
 
-          <div 
-          onClick={()=>setOpenAddField(true)}
-          className="hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded">
+          <div
+            onClick={() => setOpenAddField(true)}
+            className="hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded"
+          >
             Add Fields
           </div>
 
-          <button
-          className="bg-primary-100 hover:bg-primary-200 py-2 rounded font-semibold "
-          >Submit</button>
-
+          <button className="bg-primary-100 hover:bg-primary-200 py-2 rounded font-semibold ">
+            Submit
+          </button>
         </form>
       </div>
-      {
-        viewImageURL && (
+      {viewImageURL && (
         <ViewImage url={viewImageURL} close={() => setViewImageURL("")} />
-      )
-      }
+      )}
 
-      {
-        openAddField && (
-          <AddFieldComponent 
+      {openAddField && (
+        <AddFieldComponent
           value={fieldName}
-          onChange={(e)=>setFieldName(e.target.value)}
+          onChange={(e) => setFieldName(e.target.value)}
           submit={handleAddField}
-          close={setOpenAddField(false)} />
-        )
-      }
+          close={() => setOpenAddField(false)}
+        />
+      )}
     </section>
   );
 };
 
 export default UploadProduct;
-
-
-// 7.34
