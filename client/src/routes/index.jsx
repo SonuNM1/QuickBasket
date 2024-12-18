@@ -17,6 +17,8 @@ import SubCategoryPage from "../pages/SubCategoryPage.jsx";
 import UploadProduct from "../pages/UploadProduct.jsx";
 import ProductAdmin from "../pages/ProductAdmin.jsx";
 import AdminPermission from "../layouts/AdminPermission.jsx";
+import ProductListPage from "../pages/ProductListPage.jsx";
+import ProductDisplayPage from "../pages/ProductDisplayPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -97,10 +99,22 @@ const router = createBrowserRouter([
                     }, 
                 ]
             },
+            {
+                path: ':category',
+                children: [
+                    {
+                        path: ':subCategory',
+                        element: <ProductListPage/>
+                    }
+                ]
+            }, 
+            {
+                path: 'product/:product',
+                element: <ProductDisplayPage/>
+            }
         ]
     }
 ])
 
 export default router 
 
-// 3.12 
