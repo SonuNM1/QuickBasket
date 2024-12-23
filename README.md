@@ -101,3 +101,4 @@ Sending a digital receipt or invoice for purchases.
 - An Error Boundary is a React component designed to catch JavaScript errors anywhere in its child component tree, log those errors, and display a fallback UI instead of crashing the whole application.
 
 - prevents application crashes, improve user experience, debugging and logging 
+

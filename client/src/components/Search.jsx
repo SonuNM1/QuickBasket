@@ -12,6 +12,9 @@ const Search = () => {
   const [isSearchPage, setIsSearchPage] = useState(false);
   const [isMobile] = useMobile()
 
+  const params = useLocation()
+  const searchText = params.search.slice(3)
+
   useEffect(() => {
     const isSearch = location.pathname === "/search";
     setIsSearchPage(isSearch);
@@ -20,6 +23,14 @@ const Search = () => {
   const redirectToSearchPage = () => {
     navigate("/search");
   };
+
+  const hanleOnChange = (e) => {
+    
+    const value = e.target.value 
+    const url = `/search?q=${value}`
+
+    navigate(url)
+  }
 
   return (
     <div className="w-full min-w-[300px] lg:min-w-[420px] h-11 lg:h-12 rounded-lg border overflow-hidden flex items-center text-neutral-500 bg-slate-50 group focus-within:border-primary-200 ">
@@ -71,14 +82,17 @@ const Search = () => {
             />
           </div>
         ) : (
+
           // in search page
 
           <div className="w-full h-full">
             <input
               type="text"
               placeholder="Search for atta, dal and more"
+              defaultValue={searchText}
               className="bg-transparent w-full h-full outline-none"
               autoFocus
+              onChange={hanleOnChange}
             />
           </div>
         )}

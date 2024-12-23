@@ -96,7 +96,8 @@ const Home = () => {
             return (
               <CategoryWiseProductDisplay 
               key={c?._id+"CategorywiseProduct"}
-              id={c?._id} name={c?.name}
+              id={c?._id} 
+              name={c?.name}
               />      
             )
           })

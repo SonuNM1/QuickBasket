@@ -2,13 +2,14 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import AxiosToastError from '../util/AxiosToastError'
 import SummaryApi from '../common/SummaryAPI'
 import Loading from '../components/Loading'
 import Axios from '../util/Axios'
 import CardProduct from '../components/CardProduct'
 import {useSelector} from 'react-redux'
+import validURLConvert from '../util/validURLConvert'
 
 
 const ProductListPage = () => {
@@ -42,7 +43,7 @@ const ProductListPage = () => {
           categoryId: categoryId, 
           subCategoryId: subCategoryId, 
           page: page, 
-          limit: 10 
+          limit: 8 
         }
       })
 
@@ -90,22 +91,31 @@ const ProductListPage = () => {
 
           {/* sidebar - sub category */}
 
-            <div className='min-h-[79vh] max-h-[79vh] overflow-y-scroll  grid gap-1 shadow-md scrollbarCustom'>
+            <div className='min-h-[88vh] max-h-[88vh] overflow-y-scroll  grid gap-1 shadow-md scrollbarCustom bg-white py-2'>
                  {
                   DisplaySubCategory.map((s, index) => {
+
+                    const link = `/${validURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${validURLConvert(s.name)}-${s._id}`
+
                     return (
-                      <div className='w-full p-2 bg-white'>
-                        <div className='w-fit mx-auto'>
+
+                      <Link 
+                      to={link}
+                      className={`w-full p-2 bg-white lg:flex items-center lg:w-full lg:h-16 box-border lg:gap-4 border-b 
+                      hover:bg-green-100 cursor-pointer
+                      ${subCategoryId === s._id ? "bg-green-100" : "" }`}>
+                        <div className='w-fit max-w-28 mx-auto lg:mx-0 bg-white rounded box-border'>
                         <img
                             src={s.image}
                             alt='subCategory'
-                            className='w-14 h-full object-scale-down'
+                            className='w-14 lg:h-14   lg:w-12 h-full object-scale-down '
                           />
                         </div>
                         <p
-                        className='-mt-6 text-xs text-center'
+                        className='-mt-6 lg:mt-0 text-xs text-center lg:text-left lg:text-base'
                         >{s.name}</p>
-                      </div>
+                      </Link>
+
                     )
                   })
                  }
@@ -113,15 +123,16 @@ const ProductListPage = () => {
         
           {/* Product  */}
 
-            <div className=''>
+            <div className='sticky top-20'>
 
-                <div className='bg-white shadow-md p-4'>
+                <div className='bg-white shadow-md p-4 z-10'>
                   <h3 className='font-semibold'>{subCategoryName}</h3>
                 </div> 
 
                 <div>
 
-                    <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 p-4 gap-4'>
+                    <div className='min-h-[80vh] max-h-[80vh] overflow-y-auto relative'>
+                      <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 p-4 gap-4 '>
                       {
                         data.map((p, index)=>{
                           return (
@@ -132,6 +143,7 @@ const ProductListPage = () => {
                           )
                         })
                       }
+                    </div>
                     </div>
 
 

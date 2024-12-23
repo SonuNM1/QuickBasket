@@ -10,6 +10,7 @@ import {IoSearchOutline} from 'react-icons/io5'
 
 
 
+
 const ProductAdmin = () => {
   const [productData, setProductData] = useState([]);
   const [page, setPage] = useState(1);
@@ -103,8 +104,13 @@ const ProductAdmin = () => {
       <div className="p-4 bg-blue-50 grid ">
         <div className="min-h-[55vh]">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 ">
-            {productData.map((p, index) => {
-              return <ProductCardAdmin data={p} />;
+            {
+              productData.map((p, index) => {
+              return (
+                <ProductCardAdmin data={p} 
+                fetchProductData={fetchProductData}
+                />
+              )
             })}
           </div>
         </div>
@@ -129,6 +135,9 @@ const ProductAdmin = () => {
           </button>
         </div>
       </div>
+
+    
+
     </section>
   );
 };

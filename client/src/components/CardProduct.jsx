@@ -1,14 +1,25 @@
 
 /* eslint-disable no-unused-vars */
 
-import React from 'react'
+import React, { useState } from 'react'
 import { DisplayPriceInRupees } from '../util/DisplayPriceInRupees'
 import { Link } from 'react-router-dom'
 import validURLConvert from '../util/validURLConvert'
+import { priceWithDiscount } from '../util/PriceWithDiscount'
+import SummaryApi from '../common/SummaryAPI'
+import Axios from '../util/AxiosAxios'
+import AxiosToastError from '../util/AxiosToastError'
+import toast from 'react-hot-toast'
+import { useGlobalContext } from '../provider/GlobalProvider'
+import AddToCartButton from './AddToCartButton'
+
 
 const CardProduct = ({data}) => {
 
     const url = `/product/${validURLConvert(data.name)}-${data._id}`
+
+    const [loading, setLoading] = useState(false)
+
 
   return (
 
@@ -23,9 +34,19 @@ const CardProduct = ({data}) => {
         />
       </div>
 
+     <div className='flex items-center gap-1'>
       <div className="rounded text-xs w-fit p-[1px] px-2 text-green-600 bg-green-50">
         10 min
       </div>
+     
+      <div>
+      {
+          Boolean(data.discount) && (
+            <p className='text-green-600 bg-green-100 px-2 w-fit text-xs rounded-full'>{data.discount}% discount</p>
+          )
+        }
+      </div>
+     </div>
 
       <div className="px-2 lg:px-0  font-medium text-ellipsis text-sm lg:text-base  line-clamp-2">
         { data.name }
@@ -33,18 +54,29 @@ const CardProduct = ({data}) => {
 
       <div className="w-fit px-2 lg:px-0 text-sm lg:text-base">
         {data.unit}
+        
       </div>
 
       <div className="px-2 lg:px-0 flex items-center justify-between gap-1 lg:gap-3 text-sm lg:text-base">
 
-        <div className="font-semibold ">
-            {DisplayPriceInRupees(data.price)}
+        <div className='flex items-center gap-1'>
+          <div className="font-semibold ">
+            {DisplayPriceInRupees(priceWithDiscount(data.price, data.discount))}
+        </div>
+      
         </div>
 
         <div className="">
-            <button className='bg-green-600 hover:bg-green-700 text-white px-2 lg:px-4 py-1 rounded '>
-                Add 
-            </button>
+        {
+          data.stock === 0 ? (
+            <p className='text-red-500 text-sm text-center'>Out of Stock</p>
+          ) : (
+           <AddToCartButton
+            data={data}
+           />
+          )
+        }
+           
         </div>
       </div>
     </Link>

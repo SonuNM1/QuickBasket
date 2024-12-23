@@ -19,6 +19,7 @@ import ProductAdmin from "../pages/ProductAdmin.jsx";
 import AdminPermission from "../layouts/AdminPermission.jsx";
 import ProductListPage from "../pages/ProductListPage.jsx";
 import ProductDisplayPage from "../pages/ProductDisplayPage.jsx";
+import CartMobile from "../pages/CartMobile.jsx";
 
 const router = createBrowserRouter([
     {
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
             {
                 path: 'product/:product',
                 element: <ProductDisplayPage/>
+            }, 
+            {
+                path: 'cart', 
+                element: <CartMobile/>
             }
         ]
     }

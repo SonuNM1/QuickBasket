@@ -30,7 +30,7 @@ const auth = async (req, res, next) => {
         next()
     }catch(error){
         return res.status(500).json({
-            message: error.message || error, 
+            message: 'Access denied. Please login to proceed!', 
             error: true, 
             success: false 
         })

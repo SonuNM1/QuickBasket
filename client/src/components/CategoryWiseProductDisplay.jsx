@@ -9,6 +9,8 @@ import SummaryApi from '../common/SummaryAPI'
 import CardLoading from './CardLoading'
 import CardProduct from './CardProduct'
 import {FaAngleLeft, FaAngleRight} from 'react-icons/fa6'
+import validURLConvert from '../util/validURLConvert'
+import {useSelector} from 'react-redux'
 
 
 const CategoryWiseProductDisplay = ({id, name}) => {
@@ -17,6 +19,11 @@ const CategoryWiseProductDisplay = ({id, name}) => {
     const [loading, setLoading] = useState(false)
 
     const containerRef = useRef()
+
+    const subCategoryData = useSelector(state => state.product.allSubCategory)
+
+    const loadingCardNumber = new Array(6).fill(null)
+
 
     const fetchCategoryWiseProduct = async () => {
         try{
@@ -55,13 +62,29 @@ const CategoryWiseProductDisplay = ({id, name}) => {
         containerRef.current.scrollLeft -= 200 
     }
 
-    const loadingCardNumber = new Array(6).fill(null)
+    const handleRedirectProductListPage = () => {
+
+      const subCategory = subCategoryData.find(sub => {
+        const filterData = sub.category.some(c => {
+          return c._id == id
+        })
+        return filterData ? true : null 
+      })
+  
+      const url = `/${validURLConvert(name)}-${id}/${validURLConvert(subCategory?.name)}-${subCategory?._id}`
+  
+      return url 
+    }
+  
+    const redirectURL = handleRedirectProductListPage()
 
   return (
     <div>
     <div className="container mx-auto p-4 flex items-center justify-between gap-4">
       <h3 className="font-semibold text-lg md:text-xl">{name}</h3>
-      <Link to=''
+
+      <Link
+       to={redirectURL()}
       className="text-green-600 hover:text-green-400 "
       >See All</Link>
     </div>
